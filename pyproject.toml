@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyname"
-version = "0.0.0"
+version = "0.1.6-beta.1"
 description = "description"
 authors = ["Author Author <abc@def.ghi>"]
 license = "PROPRIETARY"
