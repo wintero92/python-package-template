@@ -14,10 +14,6 @@ inputs:
     description: "GH_TOKEN"
     required: true
 
-  pre-release:
-    description: "Create pre-release"
-    default: "false"
-
 runs:
   using: "composite"
   steps:
@@ -56,7 +52,6 @@ runs:
         poetry install
 
     - name: Publish release
-      if: ${{inputs.pre-release}} == 'false'
       shell: bash
       env:
         GH_TOKEN: ${{inputs.token}}
@@ -65,14 +60,4 @@ runs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         semantic-release publish -v DEBUG
-
-    - name: Publish pre-release
-      if: ${{inputs.pre-release}} == 'true'
-      shell: bash
-      env:
-        GH_TOKEN: ${{inputs.token}}
-      run: |
-        source venv/bin/activate
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        semantic-release publish --prerelease -v DEBUG
+        git push origin HEAD:master
