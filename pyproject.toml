@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "pyname"
+version = "0.0.0"
+description = "description"
+authors = ["Author Author <abc@def.ghi>"]
+license = "PROPRIETARY"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+python-semantic-release = "^7.32.2"
+black = "^22.12.0"
+pylint = "^2.15.9"
+
+[tool.semantic_release]
+branch = "origin/master"
+version_variable = "pyproject.toml:version"
+version_source = "tag"
+prerelease_tag = "beta"
+tag_commit = true
+commit_version_number = true
+commit_subject = "build: v{version}"
+commit_message = ""
+changelog_file = "CHANGELOG.md"
+build_command = "poetry build"
+dist_path = "dist/"
+upload_to_release = true
+upload_to_pypi = false
+remove_dist = false
+hvcs = "github"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

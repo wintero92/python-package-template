@@ -1,0 +1,75 @@
+name: Pytest
+description: Run pytest
+
+inputs:
+  python-version:
+    description: "Python version."
+    required: true
+
+  poetry-version:
+    description: "Poetry version."
+    required: true
+
+  package-name:
+    description: "Main module name for code coverage report."
+    required: true
+
+  min-cov:
+    description: "Minimum code coverage."
+    required: false
+    default: "50"
+
+  retention-days:
+    description: "Retention days for artifacts."
+    required: false
+    default: "10"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Cache
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache
+          ~/.local
+          venv
+        key: python-${{inputs.python-version}}-poetry-${{inputs.poetry-version}}-${{hashFiles('poetry.lock')}}
+        restore-keys: python-${{inputs.python-version}}-poetry-${{inputs.poetry-version}}-
+
+    - name: Setup python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{inputs.python-version}}
+
+    - name: Setup poetry
+      if: steps.cache.outputs.cache-hit != 'true'
+      uses: wintero92/setup-poetry@v1
+      with:
+        poetry-version: ${{inputs.poetry-version}}
+
+    - name: Setup venv
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        python -m venv venv
+
+    - name: Install package
+      shell: bash
+      run: |
+        source venv/bin/activate
+        poetry install
+
+    - name: Pytest
+      shell: bash
+      run: |
+        source venv/bin/activate
+        pytest tests/ --cov-fail-under=${{inputs.min-cov}} --cov=${{inputs.package-name}} --cov-report=html
+
+    - name: Upload pytest report
+      uses: actions/upload-artifact@v3
+      with:
+        name: pytest-report
+        path: htmlcov
+        retention-days: ${{inputs.retention-days}}
