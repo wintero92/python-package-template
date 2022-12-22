@@ -65,4 +65,5 @@ runs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         semantic-release publish -v DEBUG
-        git push
+        branch=$(git branch)
+        git push origin HEAD:${branch}
