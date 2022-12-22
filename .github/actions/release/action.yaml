@@ -65,5 +65,14 @@ runs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         semantic-release publish -v DEBUG
-        branch=$(git branch)
-        git push origin HEAD:${branch}
+
+    - name: Publish pre-release
+      if: ${{inputs.pre-release}} == 'true'
+      shell: bash
+      env:
+        GH_TOKEN: ${{inputs.token}}
+      run: |
+        source venv/bin/activate
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        semantic-release publish --prerelease -v DEBUG
